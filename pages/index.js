@@ -10,6 +10,10 @@ import data from "../public/data.json"
 
 export default function Home() {
 	const [year, setYear] = useState(2022)
+	const [income, setIncome] = useState(0)
+	const [state, setState] = useState("")
+	const [filing, setFiling] = useState("")
+	const [age, setAge] = useState(0)
 
 	const stateOptions = data.states
 	const filingOptions = data.filingStatus
@@ -17,6 +21,10 @@ export default function Home() {
 		{ value: "under65", label: "Under 65" },
 		{ value: "over65", label: "Over 65" },
 	]
+
+	const submitData = () => {
+		console.log("submit button pressed")
+	}
 
 	return (
 		<div className={styles.container}>
@@ -80,6 +88,9 @@ export default function Home() {
 					options={stateOptions}
 					placeholder="Select your Filing Status"
 					className={styles.dropdown}
+					onChange={(e) => {
+						setState(e.target.value)
+					}}
 				/>
 				<span className={styles.label}>Filing Status</span>
 				<Dropdown
@@ -93,7 +104,9 @@ export default function Home() {
 					placeholder="Select your Age Range"
 					className={styles.dropdown}
 				/>
-				<button>Submit</button>
+				<div className={styles.button} onClick={submitData}>
+					Submit
+				</div>
 			</main>
 
 			<footer className={styles.footer}>
