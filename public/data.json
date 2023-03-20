@@ -56,5 +56,17 @@
 		{ "value": "marriedJoint", "label": "Married Filing Jointly" },
 		{ "value": "marriedSep", "label": "Married Filing Separately" },
 		{ "value": "hoh", "label": "Head of Household" }
-	]
+	],
+	"deductions2022": {
+		"single": { "over65": 14700, "under65": 12950 },
+		"marriedJoint": { "over65": 25900, "under65": 28700 },
+		"marriedSep": { "over65": 12950, "under65": 15750 },
+		"hoh": { "over65": 19400, "under65": 21150 }
+	},
+	"deductions2023": {
+		"single": { "over65": 13850, "under65": 15700 },
+		"marriedJoint": { "over65": 27700, "under65": 30700 },
+		"marriedSep": { "over65": 13850, "under65": 16850 },
+		"hoh": { "over65": 20800, "under65": 22650 }
+	}
 }

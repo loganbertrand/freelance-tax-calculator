@@ -15,6 +15,16 @@ export default function Home() {
 	const [filing, setFiling] = useState("")
 	const [age, setAge] = useState(0)
 
+	const [federalTax, setFederalTax] = useState()
+	const [stateTax, setStateTax] = useState()
+	const [selfTax, setSelfTax] = useState()
+	const [quarterTax, setQuarterTax] = useState()
+
+	const [bracketRate, setBracketRate] = useState()
+	const [bracketAmount, setBracketAmount] = useState()
+	const [bracketFee, setBracketFee] = useState()
+	const [bracketIndex, setBracketIndex] = useState()
+
 	const stateOptions = data.states
 	const filingOptions = data.filingStatus
 	const ageOptions = [
@@ -24,6 +34,123 @@ export default function Home() {
 
 	const submitData = () => {
 		console.log("submit button pressed")
+		console.log("state: ", state)
+		console.log("income: ", income)
+		console.log("filing: ", filing)
+		console.log("age: ", age)
+
+		//Find the year
+		switch (year) {
+			case 2022:
+				switch (filing) {
+					case "single":
+						switch (age) {
+							case "over65":
+								let deduction =
+									data.deductions2022.single.over65
+
+								//Income- Standard deduction = Taxable Income
+								let taxableIncome = income - deduction
+								taxData[2022].single.brackets.map((value) => {
+									if (taxableIncome < value) {
+										setFederalTax(taxableIncome)
+									}
+								})
+							case "under65":
+						}
+					case "marriedJoint":
+						switch (age) {
+							case "over65":
+
+							case "under65":
+						}
+					case "marriedSep":
+						switch (age) {
+							case "over65":
+
+							case "under65":
+						}
+					case "hoh":
+						switch (age) {
+							case "over65":
+
+							case "under65":
+						}
+					default:
+						console.log("No filing status 2022")
+				}
+			case 2023:
+				switch (filing) {
+					case "single":
+						switch (age) {
+							case "over65":
+
+							case "under65":
+						}
+					case "marriedJoint":
+						switch (age) {
+							case "over65":
+
+							case "under65":
+						}
+					case "marriedSep":
+						switch (age) {
+							case "over65":
+
+							case "under65":
+						}
+					case "hoh":
+						switch (age) {
+							case "over65":
+
+							case "under65":
+						}
+					default:
+						console.log("No filing status 2023")
+				}
+			default:
+				console.log("No year selected")
+		}
+
+		if (year === 2022) {
+			//Find the standard deduction for freelancer
+			let deduction =
+				age === "under65"
+					? filing === "single"
+						? data.deductions2022.single.under65
+						: filing === "marriedJoint"
+						? data.deductions2022.marriedJoint.under65
+						: filing === "marriedSep"
+						? data.deductions2022.marriedSep.under65
+						: filing === "hoh"
+						? data.deductions2022.hoh.under65
+						: null
+					: filing === "single"
+					? data.deductions2022.single.over65
+					: filing === "marriedJoint"
+					? data.deductions2022.marriedJoint.over65
+					: filing === "marriedSep"
+					? data.deductions2022.marriedSep.over65
+					: filing === "hoh"
+					? data.deductions2022.hoh.over65
+					: null
+
+			//Income- Standard deduction = Taxable Income
+			let taxableIncome = income - deduction
+
+			//Find the bracket the freelancer belongs to
+			let bracketPercent = taxData[2022].map((value) => {
+				if (value === filing) {
+					return taxData
+				}
+			})
+			let bracketAmount
+			let bracketFee
+
+			//([Taxable Income - Minimum bracket amount] * Bracket %) + Bracket standard Tax = Federal
+			let federalOwed = taxableIncome - taxData[2022].filing
+		} else {
+		}
 	}
 
 	return (
@@ -82,27 +209,42 @@ export default function Home() {
 					)}
 				</div>
 				<span className={styles.label}>Income</span>
-				<input className={styles.input} placeholder="ex: 10000"></input>
+				<input
+					className={styles.input}
+					placeholder="ex: 10000"
+					onChange={(e) => {
+						setIncome(e.target.value)
+					}}
+				></input>
 				<span className={styles.label}>State</span>
 				<Dropdown
 					options={stateOptions}
 					placeholder="Select your Filing Status"
 					className={styles.dropdown}
 					onChange={(e) => {
-						setState(e.target.value)
+						setState(e.value)
 					}}
+					value={state}
 				/>
 				<span className={styles.label}>Filing Status</span>
 				<Dropdown
 					options={filingOptions}
 					placeholder="Select your Filing Status"
 					className={styles.dropdown}
+					onChange={(e) => {
+						setFiling(e.value)
+					}}
+					value={filing}
 				/>
 				<span className={styles.label}>Age</span>
 				<Dropdown
 					options={ageOptions}
 					placeholder="Select your Age Range"
 					className={styles.dropdown}
+					onChange={(e) => {
+						setAge(e.value)
+					}}
+					value={age}
 				/>
 				<div className={styles.button} onClick={submitData}>
 					Submit

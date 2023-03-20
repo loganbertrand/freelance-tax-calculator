@@ -7,7 +7,6 @@
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	height: 100vh;
 }
 
 .main {
@@ -47,7 +46,7 @@
 }
 
 .title {
-	margin: 5rem 0;
+	margin: 3rem 0;
 	line-height: 1.15;
 	font-size: 4rem;
 }
@@ -76,7 +75,7 @@
 	align-items: center;
 	justify-content: center;
 	max-width: 800px;
-	margin-top: 3rem;
+	margin-top: 1rem;
 }
 
 .card {
@@ -136,6 +135,7 @@
 }
 .label {
 	font-size: 2rem;
+	margin: 1rem 0;
 }
 
 .dropdown {
@@ -151,6 +151,7 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	margin-top: 5%;
 }
 
 @media (max-width: 600px) {
