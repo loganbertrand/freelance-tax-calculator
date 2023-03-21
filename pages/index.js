@@ -5,8 +5,8 @@ import Dropdown from "react-dropdown"
 import "react-dropdown/style.css"
 
 import styles from "../styles/Home.module.css"
-import taxData from "../public/taxes.json"
 import data from "../public/data.json"
+import { federalRates2022, stateRates2022 } from "../public/data"
 
 export default function Home() {
 	const [year, setYear] = useState(2022)
@@ -14,16 +14,11 @@ export default function Home() {
 	const [state, setState] = useState("")
 	const [filing, setFiling] = useState("")
 	const [age, setAge] = useState(0)
+	const [results, setResults] = useState(false)
 
 	const [federalTax, setFederalTax] = useState()
 	const [stateTax, setStateTax] = useState()
 	const [selfTax, setSelfTax] = useState()
-	const [quarterTax, setQuarterTax] = useState()
-
-	const [bracketRate, setBracketRate] = useState()
-	const [bracketAmount, setBracketAmount] = useState()
-	const [bracketFee, setBracketFee] = useState()
-	const [bracketIndex, setBracketIndex] = useState()
 
 	const stateOptions = data.states
 	const filingOptions = data.filingStatus
@@ -39,117 +34,73 @@ export default function Home() {
 		console.log("filing: ", filing)
 		console.log("age: ", age)
 
-		//Find the year
-		switch (year) {
-			case 2022:
-				switch (filing) {
-					case "single":
-						switch (age) {
-							case "over65":
-								let deduction =
-									data.deductions2022.single.over65
+		// Define the self-employment tax rate for the 2022 tax year
+		const selfEmploymentRate = 0.153
 
-								//Income- Standard deduction = Taxable Income
-								let taxableIncome = income - deduction
-								taxData[2022].single.brackets.map((value) => {
-									if (taxableIncome < value) {
-										setFederalTax(taxableIncome)
-									}
-								})
-							case "under65":
-						}
-					case "marriedJoint":
-						switch (age) {
-							case "over65":
+		// Calculate the self-employment tax
+		let selfEmploymentTax = income * selfEmploymentRate
 
-							case "under65":
-						}
-					case "marriedSep":
-						switch (age) {
-							case "over65":
+		setSelfTax(selfEmploymentTax.toFixed(2))
 
-							case "under65":
-						}
-					case "hoh":
-						switch (age) {
-							case "over65":
+		// Deduct half of the self-employment tax from taxable income for federal tax purposes
+		let adjustedIncome = income - selfEmploymentTax / 2
 
-							case "under65":
-						}
-					default:
-						console.log("No filing status 2022")
-				}
-			case 2023:
-				switch (filing) {
-					case "single":
-						switch (age) {
-							case "over65":
+		// Calculate the estimated federal tax owed based on adjusted income
+		let federalTax = calculateFederalTax(adjustedIncome, filing)
 
-							case "under65":
-						}
-					case "marriedJoint":
-						switch (age) {
-							case "over65":
+		// Calculate estimated State Tax
+		let stateTaxes = calculateStateTax(adjustedIncome, state, filing)
 
-							case "under65":
-						}
-					case "marriedSep":
-						switch (age) {
-							case "over65":
+		console.log("Federal Tax: ", federalTax)
+		console.log("Self Employment Tax: ", selfEmploymentTax)
+		console.log("State Tax: ", stateTaxes)
 
-							case "under65":
-						}
-					case "hoh":
-						switch (age) {
-							case "over65":
+		setResults(true)
+	}
 
-							case "under65":
-						}
-					default:
-						console.log("No filing status 2023")
-				}
-			default:
-				console.log("No year selected")
-		}
-
+	const calculateFederalTax = (income, filing) => {
 		if (year === 2022) {
-			//Find the standard deduction for freelancer
-			let deduction =
-				age === "under65"
-					? filing === "single"
-						? data.deductions2022.single.under65
-						: filing === "marriedJoint"
-						? data.deductions2022.marriedJoint.under65
-						: filing === "marriedSep"
-						? data.deductions2022.marriedSep.under65
-						: filing === "hoh"
-						? data.deductions2022.hoh.under65
-						: null
-					: filing === "single"
-					? data.deductions2022.single.over65
-					: filing === "marriedJoint"
-					? data.deductions2022.marriedJoint.over65
-					: filing === "marriedSep"
-					? data.deductions2022.marriedSep.over65
-					: filing === "hoh"
-					? data.deductions2022.hoh.over65
-					: null
-
-			//Income- Standard deduction = Taxable Income
-			let taxableIncome = income - deduction
-
-			//Find the bracket the freelancer belongs to
-			let bracketPercent = taxData[2022].map((value) => {
-				if (value === filing) {
-					return taxData
+			const federalbrackets = federalRates2022[filing]
+			let fedTax = 0
+			for (let i = 0; i < federalbrackets.length; i++) {
+				const [minIncome, maxIncome, rate] = federalbrackets[i]
+				if (income > maxIncome) {
+					fedTax += (maxIncome - minIncome) * rate
+				} else {
+					fedTax += (income - minIncome) * rate
+					break
 				}
-			})
-			let bracketAmount
-			let bracketFee
-
-			//([Taxable Income - Minimum bracket amount] * Bracket %) + Bracket standard Tax = Federal
-			let federalOwed = taxableIncome - taxData[2022].filing
+			}
+			setFederalTax(fedTax.toFixed(2))
+			return fedTax
 		} else {
+			console.log("2023 coming soon")
+		}
+	}
+
+	const calculateStateTax = (income, state, filing) => {
+		if (year === 2022) {
+			let fileType =
+				filing === "marriedJoint" || "marriedSep"
+					? "married"
+					: filing === "single" || "hoh"
+					? "single"
+					: null
+			const brackets = stateRates2022[`${state}`][fileType].brackets
+			let stateTaxes = 0
+			for (let i = 0; i < brackets.length; i++) {
+				const [minIncome, maxIncome, rate] = brackets[i]
+				if (income > maxIncome) {
+					stateTaxes += (maxIncome - minIncome) * rate
+				} else {
+					stateTaxes += (income - minIncome) * rate
+					break
+				}
+			}
+			setStateTax(stateTaxes.toFixed(2))
+			return stateTaxes
+		} else {
+			console.log("2023 coming soon")
 		}
 	}
 
@@ -166,89 +117,125 @@ export default function Home() {
 
 			<main className={styles.main}>
 				<h1 className={styles.title}>Freelance Tax Calculator</h1>
-				<h2>Please Select year</h2>
-				<div className={styles.grid}>
-					{year === 2022 ? (
-						<>
-							<div
-								className={styles.cardFill}
-								onClick={() => {
-									setYear(2022)
-								}}
-							>
-								<h3>2022</h3>
-							</div>
-							<div
-								className={styles.card}
-								onClick={() => {
-									setYear(2023)
-								}}
-							>
-								<h3>2023</h3>
-							</div>
-						</>
-					) : (
-						<>
-							<div
-								className={styles.card}
-								onClick={() => {
-									setYear(2022)
-								}}
-							>
-								<h3>2022</h3>
-							</div>
-							<div
-								className={styles.cardFill}
-								onClick={() => {
-									setYear(2023)
-								}}
-							>
-								<h3>2023</h3>
-							</div>
-						</>
-					)}
-				</div>
-				<span className={styles.label}>Income</span>
-				<input
-					className={styles.input}
-					placeholder="ex: 10000"
-					onChange={(e) => {
-						setIncome(e.target.value)
-					}}
-				></input>
-				<span className={styles.label}>State</span>
-				<Dropdown
-					options={stateOptions}
-					placeholder="Select your Filing Status"
-					className={styles.dropdown}
-					onChange={(e) => {
-						setState(e.value)
-					}}
-					value={state}
-				/>
-				<span className={styles.label}>Filing Status</span>
-				<Dropdown
-					options={filingOptions}
-					placeholder="Select your Filing Status"
-					className={styles.dropdown}
-					onChange={(e) => {
-						setFiling(e.value)
-					}}
-					value={filing}
-				/>
-				<span className={styles.label}>Age</span>
-				<Dropdown
-					options={ageOptions}
-					placeholder="Select your Age Range"
-					className={styles.dropdown}
-					onChange={(e) => {
-						setAge(e.value)
-					}}
-					value={age}
-				/>
-				<div className={styles.button} onClick={submitData}>
-					Submit
-				</div>
+				{!results && (
+					<>
+						<h2>Please Select year</h2>
+						<div className={styles.grid}>
+							{year === 2022 ? (
+								<>
+									<div
+										className={styles.cardFill}
+										onClick={() => {
+											setYear(2022)
+										}}
+									>
+										<h3>2022</h3>
+									</div>
+									<div
+										className={styles.card}
+										onClick={() => {
+											setYear(2023)
+										}}
+									>
+										<h3>2023</h3>
+									</div>
+								</>
+							) : (
+								<>
+									<div
+										className={styles.card}
+										onClick={() => {
+											setYear(2022)
+										}}
+									>
+										<h3>2022</h3>
+									</div>
+									<div
+										className={styles.cardFill}
+										onClick={() => {
+											setYear(2023)
+										}}
+									>
+										<h3>2023</h3>
+									</div>
+								</>
+							)}
+						</div>
+						<span className={styles.label}>Income</span>
+						<input
+							className={styles.input}
+							placeholder="ex: 10000"
+							onChange={(e) => {
+								setIncome(e.target.value)
+							}}
+						></input>
+						<span className={styles.label}>State</span>
+						<Dropdown
+							options={stateOptions}
+							placeholder="Select your State"
+							className={styles.dropdown}
+							onChange={(e) => {
+								setState(e.value)
+							}}
+							value={state}
+						/>
+						<span className={styles.label}>Filing Status</span>
+						<Dropdown
+							options={filingOptions}
+							placeholder="Select your Filing Status"
+							className={styles.dropdown}
+							onChange={(e) => {
+								setFiling(e.value)
+							}}
+							value={filing}
+						/>
+						{/* <span className={styles.label}>Age</span>
+						<Dropdown
+							options={ageOptions}
+							placeholder="Select your Age Range"
+							className={styles.dropdown}
+							onChange={(e) => {
+								setAge(e.value)
+							}}
+							value={age}
+						/> */}
+						<div className={styles.button} onClick={submitData}>
+							Submit
+						</div>
+					</>
+				)}
+				{results && (
+					<>
+						<h2>Results:</h2>
+						<h4>
+							Federal Tax:{" "}
+							{Intl.NumberFormat("en-US", {
+								style: "currency",
+								currency: "USD",
+							}).format(federalTax)}
+						</h4>
+						<h4>
+							State Tax:{" "}
+							{Intl.NumberFormat("en-US", {
+								style: "currency",
+								currency: "USD",
+							}).format(stateTax)}
+						</h4>
+						<h4>
+							Self-Employment Tax:{" "}
+							{Intl.NumberFormat("en-US", {
+								style: "currency",
+								currency: "USD",
+							}).format(selfTax)}
+						</h4>
+						<a
+							style={{ paddingTop: "5%", textDecoration: "none" }}
+							href={"/"}
+						>
+							Try Again
+						</a>
+					</>
+				)}
 			</main>
 
 			<footer className={styles.footer}>
