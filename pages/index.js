@@ -81,10 +81,12 @@ export default function Home() {
 	const calculateStateTax = (income, state, filing) => {
 		if (year === 2022) {
 			let fileType =
-				filing === "marriedJoint" || "marriedSep"
+				filing === "marriedJoint"
 					? "married"
-					: filing === "single" || "hoh"
+					: filing === "single" || "marriedSep"
 					? "single"
+					: filing === "hoh"
+					? "hoh"
 					: null
 			const brackets = stateRates2022[`${state}`][fileType].brackets
 			let stateTaxes = 0
