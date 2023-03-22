@@ -74,6 +74,8 @@ export default function Home() {
 	}
 
 	const calculateStateTax = (income, state, filing) => {
+		let selectedState =
+			state === "Washington, D.C." ? "WashingtonDC" : state
 		let fileType =
 			filing === "marriedJoint"
 				? "married"
@@ -84,10 +86,12 @@ export default function Home() {
 				: null
 		const brackets =
 			year === 2022
-				? stateRates2022[`${state.replace(/\s/g, "")}`][fileType]
-						.brackets
-				: stateRates2023[`${state.replace(/\s/g, "")}`][fileType]
-						.brackets
+				? stateRates2022[`${selectedState.replace(/\s/g, "")}`][
+						fileType
+				  ].brackets
+				: stateRates2023[`${selectedState.replace(/\s/g, "")}`][
+						fileType
+				  ].brackets
 		let stateTaxes = 0
 		for (let i = 0; i < brackets.length; i++) {
 			const [minIncome, maxIncome, rate] = brackets[i]
@@ -117,7 +121,7 @@ export default function Home() {
 				<h1 className={styles.title}>Freelance Tax Calculator</h1>
 				{!results && (
 					<>
-						<h2>Please Select year</h2>
+						<h2>Please select year</h2>
 						<div className={styles.grid}>
 							{year === 2022 ? (
 								<>
