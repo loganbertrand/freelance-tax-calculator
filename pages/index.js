@@ -170,7 +170,7 @@ export default function Home() {
 						<span className={styles.label}>State</span>
 						<Dropdown
 							options={stateOptions}
-							placeholder="Select your State"
+							placeholder="Select your state"
 							className={styles.dropdown}
 							onChange={(e) => {
 								setState(e.value)
@@ -180,7 +180,7 @@ export default function Home() {
 						<span className={styles.label}>Filing Status</span>
 						<Dropdown
 							options={filingOptions}
-							placeholder="Select your Filing Status"
+							placeholder="Select your filing status"
 							className={styles.dropdown}
 							onChange={(e) => {
 								setFiling(e.value)

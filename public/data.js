@@ -1251,7 +1251,7 @@ export const stateRates2022 = {
 			],
 		},
 	},
-	DC: {
+	WashingtonDC: {
 		single: {
 			brackets: [
 				[0, 10000, 0.04],
@@ -2409,7 +2409,7 @@ export const stateRates2023 = {
 			],
 		},
 	},
-	DC: {
+	WashingtonDC: {
 		single: {
 			brackets: [
 				[0, 10000, 0.04],
