@@ -24,6 +24,7 @@ export default function Home() {
 	const [federalTax, setFederalTax] = useState()
 	const [stateTax, setStateTax] = useState()
 	const [selfTax, setSelfTax] = useState()
+	const [totalTax, setTotalTax] = useState()
 
 	const stateOptions = data.states
 	const filingOptions = data.filingStatus
@@ -33,12 +34,6 @@ export default function Home() {
 	// ]
 
 	const submitData = () => {
-		console.log("submit button pressed")
-		console.log("state: ", state)
-		console.log("income: ", income)
-		console.log("filing: ", filing)
-		console.log("age: ", age)
-
 		// Define the self-employment tax rate for the 2022 tax year
 		const selfEmploymentRate = 0.153
 
@@ -56,9 +51,7 @@ export default function Home() {
 		// Calculate estimated State Tax
 		let stateTaxes = calculateStateTax(adjustedIncome, state, filing)
 
-		console.log("Federal Tax: ", federalTax)
-		console.log("Self Employment Tax: ", selfEmploymentTax)
-		console.log("State Tax: ", stateTaxes)
+		setTotalTax(federalTax + stateTaxes + selfEmploymentTax)
 
 		setResults(true)
 	}
@@ -212,6 +205,21 @@ export default function Home() {
 				{results && (
 					<>
 						<h2>Results:</h2>
+						<h3>
+							Total:{" "}
+							{Intl.NumberFormat("en-US", {
+								style: "currency",
+								currency: "USD",
+							}).format(totalTax)}
+						</h3>
+						<h3>
+							Quarterly Total:{" "}
+							{Intl.NumberFormat("en-US", {
+								style: "currency",
+								currency: "USD",
+							}).format(totalTax / 4)}
+						</h3>
+						<hr width={"80%"} />
 						<h4>
 							Federal Tax:{" "}
 							{Intl.NumberFormat("en-US", {
