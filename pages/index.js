@@ -6,7 +6,12 @@ import "react-dropdown/style.css"
 
 import styles from "../styles/Home.module.css"
 import data from "../public/data.json"
-import { federalRates2022, stateRates2022 } from "../public/data"
+import {
+	federalRates2022,
+	federalRates2023,
+	stateRates2022,
+	stateRates2023,
+} from "../public/data"
 
 export default function Home() {
 	const [year, setYear] = useState(2022)
@@ -22,10 +27,10 @@ export default function Home() {
 
 	const stateOptions = data.states
 	const filingOptions = data.filingStatus
-	const ageOptions = [
-		{ value: "under65", label: "Under 65" },
-		{ value: "over65", label: "Over 65" },
-	]
+	// const ageOptions = [
+	// 	{ value: "under65", label: "Under 65" },
+	// 	{ value: "over65", label: "Over 65" },
+	// ]
 
 	const submitData = () => {
 		console.log("submit button pressed")
@@ -59,51 +64,49 @@ export default function Home() {
 	}
 
 	const calculateFederalTax = (income, filing) => {
-		if (year === 2022) {
-			const federalbrackets = federalRates2022[filing]
-			let fedTax = 0
-			for (let i = 0; i < federalbrackets.length; i++) {
-				const [minIncome, maxIncome, rate] = federalbrackets[i]
-				if (income > maxIncome) {
-					fedTax += (maxIncome - minIncome) * rate
-				} else {
-					fedTax += (income - minIncome) * rate
-					break
-				}
+		const federalbrackets =
+			year === 2022 ? federalRates2022[filing] : federalRates2023[filing]
+		let fedTax = 0
+		for (let i = 0; i < federalbrackets.length; i++) {
+			const [minIncome, maxIncome, rate] = federalbrackets[i]
+			if (income > maxIncome) {
+				fedTax += (maxIncome - minIncome) * rate
+			} else {
+				fedTax += (income - minIncome) * rate
+				break
 			}
-			setFederalTax(fedTax.toFixed(2))
-			return fedTax
-		} else {
-			console.log("2023 coming soon")
 		}
+		setFederalTax(fedTax.toFixed(2))
+		return fedTax
 	}
 
 	const calculateStateTax = (income, state, filing) => {
-		if (year === 2022) {
-			let fileType =
-				filing === "marriedJoint"
-					? "married"
-					: filing === "single" || "marriedSep"
-					? "single"
-					: filing === "hoh"
-					? "hoh"
-					: null
-			const brackets = stateRates2022[`${state}`][fileType].brackets
-			let stateTaxes = 0
-			for (let i = 0; i < brackets.length; i++) {
-				const [minIncome, maxIncome, rate] = brackets[i]
-				if (income > maxIncome) {
-					stateTaxes += (maxIncome - minIncome) * rate
-				} else {
-					stateTaxes += (income - minIncome) * rate
-					break
-				}
+		let fileType =
+			filing === "marriedJoint"
+				? "married"
+				: filing === "single" || "marriedSep"
+				? "single"
+				: filing === "hoh"
+				? "hoh"
+				: null
+		const brackets =
+			year === 2022
+				? stateRates2022[`${state.replace(/\s/g, "")}`][fileType]
+						.brackets
+				: stateRates2023[`${state.replace(/\s/g, "")}`][fileType]
+						.brackets
+		let stateTaxes = 0
+		for (let i = 0; i < brackets.length; i++) {
+			const [minIncome, maxIncome, rate] = brackets[i]
+			if (income > maxIncome) {
+				stateTaxes += (maxIncome - minIncome) * rate
+			} else {
+				stateTaxes += (income - minIncome) * rate
+				break
 			}
-			setStateTax(stateTaxes.toFixed(2))
-			return stateTaxes
-		} else {
-			console.log("2023 coming soon")
 		}
+		setStateTax(stateTaxes.toFixed(2))
+		return stateTaxes
 	}
 
 	return (
@@ -215,20 +218,43 @@ export default function Home() {
 								style: "currency",
 								currency: "USD",
 							}).format(federalTax)}
+							<br />
+							<br />
+							Quarterly:{" "}
+							{Intl.NumberFormat("en-US", {
+								style: "currency",
+								currency: "USD",
+							}).format(federalTax / 4)}
 						</h4>
+						<hr width={"80%"} />
 						<h4>
 							State Tax:{" "}
 							{Intl.NumberFormat("en-US", {
 								style: "currency",
 								currency: "USD",
 							}).format(stateTax)}
+							<br />
+							<br />
+							Quarterly:{" "}
+							{Intl.NumberFormat("en-US", {
+								style: "currency",
+								currency: "USD",
+							}).format(stateTax / 4)}
 						</h4>
+						<hr width={"80%"} />
 						<h4>
 							Self-Employment Tax:{" "}
 							{Intl.NumberFormat("en-US", {
 								style: "currency",
 								currency: "USD",
 							}).format(selfTax)}
+							<br />
+							<br />
+							Quarterly:{" "}
+							{Intl.NumberFormat("en-US", {
+								style: "currency",
+								currency: "USD",
+							}).format(selfTax / 4)}
 						</h4>
 						<a
 							style={{ paddingTop: "5%", textDecoration: "none" }}
