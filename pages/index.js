@@ -28,10 +28,6 @@ export default function Home() {
 
 	const stateOptions = data.states
 	const filingOptions = data.filingStatus
-	// const ageOptions = [
-	// 	{ value: "under65", label: "Under 65" },
-	// 	{ value: "over65", label: "Over 65" },
-	// ]
 
 	const submitData = () => {
 		// Define the self-employment tax rate for the 2022 tax year
@@ -42,14 +38,11 @@ export default function Home() {
 
 		setSelfTax(selfEmploymentTax.toFixed(2))
 
-		// Deduct half of the self-employment tax from taxable income for federal tax purposes
-		let adjustedIncome = income - selfEmploymentTax / 2
-
-		// Calculate the estimated federal tax owed based on adjusted income
-		let federalTax = calculateFederalTax(adjustedIncome, filing)
+		// Calculate the estimated federal tax owed based on income
+		let federalTax = calculateFederalTax(income, filing)
 
 		// Calculate estimated State Tax
-		let stateTaxes = calculateStateTax(adjustedIncome, state, filing)
+		let stateTaxes = calculateStateTax(income, state, filing)
 
 		setTotalTax(federalTax + stateTaxes + selfEmploymentTax)
 
@@ -191,16 +184,7 @@ export default function Home() {
 							}}
 							value={filing}
 						/>
-						{/* <span className={styles.label}>Age</span>
-						<Dropdown
-							options={ageOptions}
-							placeholder="Select your Age Range"
-							className={styles.dropdown}
-							onChange={(e) => {
-								setAge(e.value)
-							}}
-							value={age}
-						/> */}
+
 						<div className={styles.button} onClick={submitData}>
 							Submit
 						</div>
@@ -216,13 +200,7 @@ export default function Home() {
 								currency: "USD",
 							}).format(totalTax)}
 						</h3>
-						<h3>
-							Quarterly Total:{" "}
-							{Intl.NumberFormat("en-US", {
-								style: "currency",
-								currency: "USD",
-							}).format(totalTax / 4)}
-						</h3>
+
 						<hr width={"80%"} />
 						<h4>
 							Federal Tax:{" "}
@@ -230,43 +208,30 @@ export default function Home() {
 								style: "currency",
 								currency: "USD",
 							}).format(federalTax)}
-							<br />
-							<br />
-							Quarterly:{" "}
-							{Intl.NumberFormat("en-US", {
-								style: "currency",
-								currency: "USD",
-							}).format(federalTax / 4)}
 						</h4>
-						<hr width={"80%"} />
+
 						<h4>
 							State Tax:{" "}
 							{Intl.NumberFormat("en-US", {
 								style: "currency",
 								currency: "USD",
 							}).format(stateTax)}
-							<br />
-							<br />
-							Quarterly:{" "}
-							{Intl.NumberFormat("en-US", {
-								style: "currency",
-								currency: "USD",
-							}).format(stateTax / 4)}
 						</h4>
-						<hr width={"80%"} />
+
 						<h4>
 							Self-Employment Tax:{" "}
 							{Intl.NumberFormat("en-US", {
 								style: "currency",
 								currency: "USD",
 							}).format(selfTax)}
-							<br />
-							<br />
-							Quarterly:{" "}
+						</h4>
+						<hr width={"80%"} />
+						<h4>
+							Quarterly estimated Federal taxes owed:{" "}
 							{Intl.NumberFormat("en-US", {
 								style: "currency",
 								currency: "USD",
-							}).format(selfTax / 4)}
+							}).format(federalTax / 4)}
 						</h4>
 						<a
 							style={{ paddingTop: "5%", textDecoration: "none" }}
