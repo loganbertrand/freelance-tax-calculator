@@ -168,7 +168,10 @@ export default function Home() {
 						<Dropdown
 							options={stateOptions}
 							placeholder="Select your state"
-							className={styles.dropdown}
+							controlClassName={styles.input}
+							menuClassName={styles.dropdown}
+							arrowClassName={styles.dropdownArrow}
+							placeholderClassName={styles.placeholder}
 							onChange={(e) => {
 								setState(e.value)
 							}}
@@ -178,7 +181,10 @@ export default function Home() {
 						<Dropdown
 							options={filingOptions}
 							placeholder="Select your filing status"
-							className={styles.dropdown}
+							controlClassName={styles.input}
+							menuClassName={styles.dropdown}
+							arrowClassName={styles.dropdownArrow}
+							placeholderClassName={styles.placeholder}
 							onChange={(e) => {
 								setFiling(e.value)
 							}}
@@ -192,51 +198,99 @@ export default function Home() {
 				)}
 				{results && (
 					<>
-						<h2>Results:</h2>
-						<h3>
-							Total:{" "}
+						<h1>
+							Estimated Total Owed:{" "}
 							{Intl.NumberFormat("en-US", {
 								style: "currency",
 								currency: "USD",
 							}).format(totalTax)}
-						</h3>
+						</h1>
+						<h2>Annual Split:</h2>
+						<table className={styles.table}>
+							<tbody>
+								<tr className={styles.row}>
+									<td>Federal</td>
+									<td>
+										{Intl.NumberFormat("en-US", {
+											style: "currency",
+											currency: "USD",
+										}).format(federalTax)}
+									</td>
+								</tr>
+								<tr className={styles.row}>
+									<td>State</td>
+									<td>
+										{Intl.NumberFormat("en-US", {
+											style: "currency",
+											currency: "USD",
+										}).format(stateTax)}
+									</td>
+								</tr>
+								<tr className={styles.row}>
+									<td>Self-Employment</td>
+									<td>
+										{Intl.NumberFormat("en-US", {
+											style: "currency",
+											currency: "USD",
+										}).format(selfTax)}
+									</td>
+								</tr>
+								<hr width={"100%"} />
+								<tr className={styles.row}>
+									<td>Total</td>
+									<td>
+										{Intl.NumberFormat("en-US", {
+											style: "currency",
+											currency: "USD",
+										}).format(totalTax)}
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<h2>Quarterly Split:</h2>
+						<table className={styles.table}>
+							<tbody>
+								<tr className={styles.row}>
+									<td>Federal</td>
+									<td>
+										{Intl.NumberFormat("en-US", {
+											style: "currency",
+											currency: "USD",
+										}).format(federalTax / 4)}
+									</td>
+								</tr>
+								<tr className={styles.row}>
+									<td>State</td>
+									<td>
+										{Intl.NumberFormat("en-US", {
+											style: "currency",
+											currency: "USD",
+										}).format(stateTax / 4)}
+									</td>
+								</tr>
+								<tr className={styles.row}>
+									<td>Self-Employment</td>
+									<td>
+										{Intl.NumberFormat("en-US", {
+											style: "currency",
+											currency: "USD",
+										}).format(selfTax / 4)}
+									</td>
+								</tr>
+								<hr width={"100%"} />
+								<tr className={styles.row}>
+									<td>Total</td>
+									<td>
+										{Intl.NumberFormat("en-US", {
+											style: "currency",
+											currency: "USD",
+										}).format(totalTax / 4)}
+									</td>
+								</tr>
+							</tbody>
+						</table>
 
-						<hr width={"80%"} />
-						<h4>
-							Federal Tax:{" "}
-							{Intl.NumberFormat("en-US", {
-								style: "currency",
-								currency: "USD",
-							}).format(federalTax)}
-						</h4>
-
-						<h4>
-							State Tax:{" "}
-							{Intl.NumberFormat("en-US", {
-								style: "currency",
-								currency: "USD",
-							}).format(stateTax)}
-						</h4>
-
-						<h4>
-							Self-Employment Tax:{" "}
-							{Intl.NumberFormat("en-US", {
-								style: "currency",
-								currency: "USD",
-							}).format(selfTax)}
-						</h4>
-						<hr width={"80%"} />
-						<h4>
-							Quarterly estimated Federal taxes owed:{" "}
-							{Intl.NumberFormat("en-US", {
-								style: "currency",
-								currency: "USD",
-							}).format(federalTax / 4)}
-						</h4>
-						<a
-							style={{ paddingTop: "5%", textDecoration: "none" }}
-							href={"/"}
-						>
+						<a className={styles.button} href={"/"}>
 							Try Again
 						</a>
 					</>
