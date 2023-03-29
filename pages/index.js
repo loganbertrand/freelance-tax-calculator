@@ -3,6 +3,7 @@ import Head from "next/head"
 import Image from "next/image"
 import Dropdown from "react-dropdown"
 import "react-dropdown/style.css"
+import { UilGithub, UilLinkedin } from "@iconscout/react-unicons"
 
 import styles from "../styles/Home.module.css"
 import data from "../public/data.json"
@@ -111,7 +112,10 @@ export default function Home() {
 			</Head>
 
 			<main className={styles.main}>
-				<h1 className={styles.title}>Freelance Tax Calculator</h1>
+				<h1 className={styles.title}>
+					<span style={{ color: "#12664f" }}>Freelance</span> Tax
+					Calculator
+				</h1>
 				{!results && (
 					<>
 						<h2>Please select year</h2>
@@ -198,13 +202,21 @@ export default function Home() {
 				)}
 				{results && (
 					<>
-						<h1>
+						<h1 style={{ textAlign: "center" }}>
 							Estimated Total Owed:{" "}
 							{Intl.NumberFormat("en-US", {
 								style: "currency",
 								currency: "USD",
 							}).format(totalTax)}
 						</h1>
+						<h3 style={{ textAlign: "center" }}>
+							Calculated with{" "}
+							<span style={{ color: "#12664f" }}>${income}</span>{" "}
+							taxable income in the state of{" "}
+							<span style={{ color: "#12664f" }}>{state}</span>{" "}
+							filing{" "}
+							<span style={{ color: "#12664f" }}>{filing}</span>
+						</h3>
 						<h2>Annual Split:</h2>
 						<table className={styles.table}>
 							<tbody>
@@ -289,6 +301,11 @@ export default function Home() {
 								</tr>
 							</tbody>
 						</table>
+						<h5 style={{ width: "60%" }}>
+							*This data was calculated with no deductions taken
+							out. To get a better estimate, enter your total
+							taxable income after expenses and deductions.
+						</h5>
 
 						<a className={styles.button} href={"/"}>
 							Try Again
@@ -298,21 +315,37 @@ export default function Home() {
 			</main>
 
 			<footer className={styles.footer}>
-				<a
-					href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					Powered by{" "}
-					<span className={styles.logo}>
-						<Image
-							src="/vercel.svg"
-							alt="Vercel Logo"
-							width={72}
-							height={16}
-						/>
-					</span>
-				</a>
+				<span className={styles.copyright}>
+					Built by{" "}
+					<a
+						style={{ color: "black" }}
+						href="https://www.loganbertrand.com/"
+						aria-label="Personal Portfolio link for Logan Bertrand"
+					>
+						Logan Bertrand
+					</a>{" "}
+					{new Date().getFullYear()}
+				</span>
+				<span className={styles.icons}>
+					<a
+						href="https://github.com/loganbertrand"
+						style={{ color: "black" }}
+						target="_blank"
+						rel="noreferrer"
+						aria-label="View Logan Bertrand's Github Profile"
+					>
+						<UilGithub fontSize="medium" />
+					</a>
+					<a
+						href="https://www.linkedin.com/in/logan-bertrand-/"
+						style={{ color: "black" }}
+						target="_blank"
+						rel="noreferrer"
+						aria-label="View Logan Bertrand's LinkedIn Profile"
+					>
+						<UilLinkedin fontSize="medium" />
+					</a>
+				</span>
 			</footer>
 		</div>
 	)
